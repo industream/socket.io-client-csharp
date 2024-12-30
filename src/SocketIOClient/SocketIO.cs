@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using SocketIO.Core;
@@ -170,7 +171,11 @@ namespace SocketIOClient
             _eventFuncHandlers = new Dictionary<string, Func<SocketIOResponse, Task>>();
             _onAnyHandlers = new List<OnAnyHandler>();
 
-            Serializer = new SystemTextJsonSerializer();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+            Serializer = new SystemTextJsonSerializer(options);
 
             HttpClient = new DefaultHttpClient(Options.RemoteCertificateValidationCallback);
             ClientWebSocketProvider = () =>
